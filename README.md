@@ -11,4 +11,5 @@ Screens:
 - [] Photo Comments
 - [] Photo Like(Challenge)
 
-10.6강의를 들을 차례이다.
+소셜로그인 부분은 수정해야한다.
+13.0 강의를 들을 차례이다.
