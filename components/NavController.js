@@ -1,9 +1,14 @@
 import React from "react";
-import { Text } from "react-native";
+import { View } from "react-native";
 import { useIsLoggedIn } from "../AuthContext";
+import AuthNavigation from "../navigation/AuthNavigation";
+import MainNavigation from "../navigation/MainNavigation";
 
 export default () => {
   const isLoggedIn = useIsLoggedIn();
-  console.log(isLoggedIn);
-  return <Text>NavControlelr</Text>;
+  return (
+    <View style={{ flex: 1}}>
+      {isLoggedIn ? <MainNavigation /> : <AuthNavigation />}
+    </View>
+  );
 };

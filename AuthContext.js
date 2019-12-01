@@ -4,8 +4,8 @@ import { AppLoading } from "expo";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+export const AuthProvider = ({isLoggedIn: isLoggedInProp, children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(isLoggedInProp);
   const logUserIn = async () => {
     try {
       await AsyncStorage.setItem("isLoggedIn", "true");
@@ -23,7 +23,8 @@ export const AuthProvider = ({ children }) => {
       console.log(e);
     }
   };
-
+  console.log({ isLoggedIn, logUserIn, logUserOut });
+  //usecontext에서 value값을 지정해주면 해당하는 js로 값이 넘어간다.
   return (
     <AuthContext.Provider value={{ isLoggedIn, logUserIn, logUserOut }}>
       {children}

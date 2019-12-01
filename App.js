@@ -17,6 +17,8 @@ import { AuthProvider } from "./AuthContext";
 export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [client, setClient] = useState(null);
+  //AuthContext.js에서 처리하면 preloading을 표시하는데 문제가 생긴다.
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const preLoad = async () => {
     try {
       await Font.loadAsync({
@@ -33,7 +35,12 @@ export default function App() {
         cache,
         ...apolloClientOptions
       });
-
+      const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
+      if(!isLoggedIn || isLoggedIn === "false" ){
+        setIsLoggedIn(false);
+      } else{
+        setIsLoggedIn(true);
+      }
       setLoaded(true);
       setClient(client);
     } catch (e) {
@@ -45,10 +52,10 @@ export default function App() {
     preLoad();
   }, []);
 
-  return loaded && client ? (
+  return loaded && client !== null ?  (
     <ApolloProvider client={client}>
       <ThemeProvider theme={styles}>
-        <AuthProvider>
+        <AuthProvider isLoggedIn={isLoggedIn}>
           <NavController />
         </AuthProvider>
       </ThemeProvider>
