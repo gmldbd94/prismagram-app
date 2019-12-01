@@ -7,10 +7,10 @@ import AuthHome from "../screens/Auth/AuthHome";
 
 const AuthNavigation = createStackNavigator(
   {
-    AuthHome,
     Signup,
     Login,
-    Confirm
+    Confirm,
+    AuthHome
   },
   //다양한 설정이 가능하다.
   //https://reactnavigation.org/docs/en/hello-react-navigation.html
