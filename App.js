@@ -15,10 +15,10 @@ import styles from "./styles";
 import NavController from "./components/NavController";
 import { AuthProvider } from "./AuthContext";
 
+AsyncStorage.clear()
 export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [client, setClient] = useState(null);
-  //AuthContext.js에서 처리하면 preloading을 표시하는데 문제가 생긴다.
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const preLoad = async () => {
     try {
@@ -27,13 +27,10 @@ export default function App() {
       });
       await Asset.loadAsync([require("./assets/logo.png")]);
       const cache = new InMemoryCache();
-      //폰에 저장된 cahce 데이터를 동기화한다.
       await persistCache({
         cache,
         storage: AsyncStorage
       });
-
-      //요청할 때마다 백엔드에 토큰을 함께 전달하는 겁니다.
       const client = new ApolloClient({
         cache,
         request: async operation => {
@@ -45,9 +42,9 @@ export default function App() {
         ...apolloClientOptions
       });
       const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
-      if(!isLoggedIn || isLoggedIn === "false" ){
+      if (!isLoggedIn || isLoggedIn === "false") {
         setIsLoggedIn(false);
-      } else{
+      } else {
         setIsLoggedIn(true);
       }
       setLoaded(true);
@@ -56,12 +53,11 @@ export default function App() {
       console.log(e);
     }
   };
-
   useEffect(() => {
     preLoad();
   }, []);
 
-  return loaded && client !== null ?  (
+  return loaded && client && isLoggedIn !== null ? (
     <ApolloProvider client={client}>
       <ThemeProvider theme={styles}>
         <AuthProvider isLoggedIn={isLoggedIn}>

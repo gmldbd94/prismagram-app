@@ -6,7 +6,9 @@ import AuthInput from "../../components/AuthInput";
 import useInput from "../../hooks/useInput";
 import { Alert } from "react-native";
 import { useMutation } from "react-apollo-hooks";
-import { LOG_IN } from "./AuthQueries";
+import { useQuery } from "react-apollo-hooks";
+import { LOG_IN, CHECKED_EMAIL, CONFIRM_SECRET } from "./AuthQueries";
+import { useLogIn } from "../../AuthContext";
 
 const View = styled.View`
   justify-content: center;
@@ -24,6 +26,22 @@ export default ({ navigation }) => {
       email: emailInput.value
     }
   });
+
+  const [checkedEmailMutation] = useMutation(CHECKED_EMAIL, {
+    variables:{
+      email: emailInput.value
+    }
+  });
+
+  const [confirmSecretMutation] = useMutation(CONFIRM_SECRET, {
+    variables: {
+      secret: "",
+      email: emailInput.value
+    }
+  });
+
+  const logIn = useLogIn();
+
   const handleLogin = async () => {
     const { value } = emailInput;
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -36,14 +54,20 @@ export default ({ navigation }) => {
     }
     try {
       setLoading(true);
-      const { data: { requestSecret }} = await requestSecretMutation();
-      if (requestSecret) {
-        Alert.alert("Check your email");
-        navigation.navigate("Confirm", { email: value });
-        return;
-      } else {
-        Alert.alert("Account not found");
-        navigation.navigate("Signup", { email: value });
+      const { data: { checkedEmail }} = await checkedEmailMutation();
+      if( checkedEmail ) {
+        const { data: { confirmSecret } } = await confirmSecretMutation();
+        logIn(confirmSecret);
+      } else{
+        const { data: { requestSecret }} = await requestSecretMutation();
+        if (requestSecret) {
+          Alert.alert("Check your email");
+          navigation.navigate("Confirm", { email: value });
+          return;
+        } else {
+          Alert.alert("Account not found");
+          navigation.navigate("Signup", { email: value });
+        }
       }
     } catch (e) {
       console.log(e);

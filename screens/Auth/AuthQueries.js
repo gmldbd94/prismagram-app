@@ -27,3 +27,9 @@ export const CONFIRM_SECRET = gql`
     confirmSecret(secret: $secret, email: $email)
   }
 `;
+
+export const CHECKED_EMAIL = gql`
+  mutation checkedEmail($email: String!){
+    checkedEmail(email: $email)
+  }
+`;

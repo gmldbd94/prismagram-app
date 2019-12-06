@@ -30,6 +30,7 @@ export default ({ navigation }) => {
       email: navigation.getParam("email")
     }
   });
+  
   const handleConfirm = async () => {
     const { value } = confirmInput;
     if (value === "" || !value.includes(" ")) {
