@@ -8,6 +8,7 @@ import NavIcon from "./NavIcon";
 
 const Container = styled.TouchableOpacity`
   padding-right: 20px;
+  padding-left: 20px;
 `;
 
 

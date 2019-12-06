@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { AppLoading } from "expo";
 import { Asset } from 'expo-asset';
@@ -31,8 +32,16 @@ export default function App() {
         cache,
         storage: AsyncStorage
       });
+
+      //요청할 때마다 백엔드에 토큰을 함께 전달하는 겁니다.
       const client = new ApolloClient({
         cache,
+        request: async operation => {
+          const token = await AsyncStorage.getItem("jwt");
+          return operation.setContext({
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        },
         ...apolloClientOptions
       });
       const isLoggedIn = await AsyncStorage.getItem("isLoggedIn");
