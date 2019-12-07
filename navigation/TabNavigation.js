@@ -8,8 +8,13 @@ import Home from "../screens/Tabs/Home";
 import Search from "../screens/Tabs/Search";
 import Notifications from "../screens/Tabs/Notifications";
 import Profile from "../screens/Tabs/Profile";
+import Detail from "../screens/Detail";
 import MessagesLink from "../components/MessagesLink";
-import { stackStyles } from "./config";
+import { stackStyles, navOption } from "./config";
+import styles from "../styles";
+import UserDetail from "../screens/UserDetail";
+
+
 //https://reactnavigation.org/docs/en/tab-based-navigation.html 참고할 것
 // jelloooooo: {
 //   screen: Home,
@@ -17,22 +22,43 @@ import { stackStyles } from "./config";
 // },
 
 const stackFactory = (initialRoute, customConfig) =>
-  createStackNavigator({
-    InitialRoute: {
-      screen: initialRoute,
-      navigationOptions: {
-        ...customConfig,
+  createStackNavigator(
+    {
+      InitialRoute: {
+        screen: initialRoute,
+        navigationOptions: {
+          ...customConfig
+        }
+      },
+      Detail: {
+        screen: Detail,
+        navigationOptions: {
+          headerTintColor: styles.blackColor,
+          title: "Photo"
+        }
+      },
+      UserDetail: {
+        screen: UserDetail,
+        navigationOptions: ({ navigation }) => ({
+          title: navigation.getParam("username")
+        })
+      }
+    },
+    {
+      defaultNavigationOptions: {
+        headerBackTitle: null,
+        headerTintColor: styles.blackColor,
         headerStyle: { ...stackStyles }
       }
     }
-  });
+  );
 //인덱스가 첫번째인 것이 첫화면이다.
 export default createBottomTabNavigator(
   {
     Home: {
       screen: stackFactory(Home, {
         headerRight: <MessagesLink />,
-        headerTitle: <NavIcon name="logo-instagram" size={36} />
+        headerTitle: <NavIcon name="logo-instagram" size={36} />,
       }),
       navigationOptions: {
         tabBarIcon: ({ focused }) => (
@@ -45,8 +71,8 @@ export default createBottomTabNavigator(
     },
     Search: {
       screen: stackFactory(Search, {
-        headerBackTitle: null
-      }),
+          headerBackTitle: null
+        }),
       navigationOptions: {
         tabBarIcon: ({ focused }) => (
           <NavIcon
@@ -110,6 +136,8 @@ export default createBottomTabNavigator(
     }
   },
   {
+    //초기 화면 설정
+    initialRouteName: "Profile",
     tabBarOptions: {
       showLabel: false,
       style: {
