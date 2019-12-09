@@ -7,6 +7,9 @@ import styles from "../../styles";
 import constants from "../../constants";
 import AuthButton from "../../components/AuthButton";
 
+//안드로이드 방식과 ios 방식을 구별해줘야 한다.
+import { Platform } from "react-native";
+
 const View = styled.View`
   justify-content: center;
   align-items: center;
@@ -46,18 +49,71 @@ const Text = styled.Text`
 export default ({ navigation }) => {
   const [loading, setIsLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
-  const captionInput = useInput("");
-  const locationInput = useInput("");
+  const photo = navigation.getParam("photo");
+  const captionInput = useInput("dfdf");
+  const locationInput = useInput("dfdfd");
   const handleSubmit = async () => {
     if (captionInput.value === "" || locationInput.value === "") {
       Alert.alert("All fields are required");
+    }
+    const formData = new FormData();
+    const name = photo.filename;
+    const [, type] = name.split(".");
+    if(Platform.OS === "android"){
+      console.log(type.toLowerCase());
+      formData.append("file", {
+        name,
+        type: "image/jpeg",
+        uri: photo.uri
+      });
+    }
+    else{
+      formData.append("file", {
+        name,
+        type: type.toLowerCase(),
+        uri: photo.uri
+      });
+    }
+
+    console.log(formData);
+    //192.168.43.92
+    try {
+      setIsLoading(true);
+      const{
+        data: { location }
+      } =
+      await axios.post("http://7408b66e.ngrok.io/api/upload", formData, {
+        headers: {
+            "content-type": "multipart/form-data"
+          }
+      });
+      setFilUrl(location);
+      // const{
+      //   data: { location }
+      // } = await axios.post("http://192.168.43.92:4000", formData, {
+      //   headers: {
+      //     "content-type": "multipart/form-data"
+      //   }
+      // });
+      // .then(function (response) {
+      // console.log(response);
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // });
+      // setFileUrl(location);
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Can't upload", "Try later");
+    } finally{
+      setIsLoading(false);
     }
   };
   return (
     <View>
       <Container>
         <Image
-          source={{ uri: navigation.getParam("photo").uri }}
+          source={{ uri: photo.uri }}
           style={{ height: 80, width: 80, marginRight: 30 }}
         />
         <Form>

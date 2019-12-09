@@ -137,7 +137,7 @@ export default createBottomTabNavigator(
   },
   {
     //초기 화면 설정
-    initialRouteName: "Profile",
+    initialRouteName: "Home",
     tabBarOptions: {
       showLabel: false,
       style: {
